@@ -18,7 +18,14 @@ sed -i 's|<default></default>|<default>/usr/share/wallpapers/MyWallpaper/content
 mkdir -p /etc/skel/.config/autostart
 mkdir -p /etc/skel/.config/default/autostart
 
-# 5. Set Breeze Dark theme
+# 5. Set wallpaper config for new users (FIXED: Added back)
+cat > /etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc << 'EOF'
+[Containments][1][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/wallpapers/MyWallpaper/contents/images/unios.jpg
+EOF
+cp /etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc /etc/skel/.config/default/
+
+# 6. Set Breeze Dark theme
 cat > /etc/skel/.config/kdeglobals << 'EOF'
 [KDE]
 LookAndFeelPackage=org.kde.breezedark.desktop
@@ -34,38 +41,38 @@ action/help_about_kde=false
 EOF
 cp /etc/skel/.config/kdeglobals /etc/skel/.config/default/
 
-# 6. Set Plasma style
+# 7. Set Plasma style
 cat > /etc/skel/.config/plasmarc << 'EOF'
 [Theme]
 name=breeze-dark
 EOF
 cp /etc/skel/.config/plasmarc /etc/skel/.config/default/
 
-# 7. Disable KDE welcome screen
+# 8. Disable KDE welcome screen
 cat > /etc/skel/.config/plasma-welcomerc << 'EOF'
 [General]
 ShouldShow=false
 EOF
 cp /etc/skel/.config/plasma-welcomerc /etc/skel/.config/default/
 
-# 8. Disable KDED welcome module
+# 9. Disable KDED welcome module
 cat > /etc/skel/.config/kded_plasma_welcomerc << 'EOF'
 [Module]
 autoload=false
 EOF
 cp /etc/skel/.config/kded_plasma_welcomerc /etc/skel/.config/default/
 
-# 9. Remove plasma-welcome package entirely
+# 10. Remove plasma-welcome package entirely
 apt remove --purge -y plasma-welcome
 apt autoremove --purge -y
 
-# 10. Install unidesk
+# 11. Install unidesk
 apt install -y ../resources/unidesk_1.0-1_all.deb
 
-# 11. Install unibackpack
+# 12. Install unibackpack
 apt install -y ../resources/unibackpack_1.0_amd64.deb
 
-# 12. Add unidesk to autostart
+# 13. Add unidesk to autostart
 cat > /etc/skel/.config/autostart/unidesk.desktop << 'EOF'
 [Desktop Entry]
 Type=Application
@@ -77,26 +84,26 @@ X-KDE-autostart-condition=false
 EOF
 cp /etc/skel/.config/autostart/unidesk.desktop /etc/skel/.config/default/autostart/
 
-# 13. Set Kickoff start menu icon
+# 14. Set Kickoff start menu icon
 sed -i 's/panel.addWidget("org.kde.plasma.kickoff")/var kickoff = panel.addWidget("org.kde.plasma.kickoff")\nkickoff.currentConfigGroup = ["General"]\nkickoff.writeConfig("icon", "unios")/' \
   /usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents/layout.js
 
-# 14. Remove default desktop shortcuts
+# 15. Remove default desktop shortcuts
 rm -f /etc/skel/Desktop/org.kfocus.web.howtos.desktop
 rm -f /etc/skel/Desktop/org.kubuntu.web.home.desktop
 
-# 15. Rename Install shortcut to Install UniOS with unios icon
+# 16. Rename Install shortcut to Install UniOS with unios icon
 sed -i 's/Name=Install Kubuntu 26.04/Name=Install UniOS/' /usr/share/applications/kubuntu-calamares.desktop
 sed -i 's/GenericName=Install Kubuntu/GenericName=Install UniOS/' /usr/share/applications/kubuntu-calamares.desktop
 sed -i 's/Icon=system-software-install/Icon=unios/' /usr/share/applications/kubuntu-calamares.desktop
 sed -i '/^Name\[/d' /usr/share/applications/kubuntu-calamares.desktop
 sed -i '/^GenericName\[/d' /usr/share/applications/kubuntu-calamares.desktop
 
-# 16. Add Install UniOS shortcut to desktop
+# 17. Add Install UniOS shortcut to desktop
 mkdir -p /etc/skel/Desktop
 cp /usr/share/applications/kubuntu-calamares.desktop /etc/skel/Desktop/
 
-# 17. Add UniBackpack shortcut to desktop
+# 18. Add UniBackpack shortcut to desktop
 cat > /etc/skel/Desktop/unibackpack.desktop << 'EOF'
 [Desktop Entry]
 Type=Application
@@ -109,7 +116,10 @@ Categories=Utility;
 EOF
 chmod +x /etc/skel/Desktop/unibackpack.desktop
 
-# 18. Add UniOS PPA and install desktop settings
+# 19. Add UniOS PPA and install desktop settings (FIXED: Disabling cdrom & uncommenting apt)
+sed -i 's/^deb cdrom:/# deb cdrom:/g' /etc/apt/sources.list 2>/dev/null
+rm -f /etc/apt/sources.list.d/*cdrom*
+
 curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x1607DC0CE88E5632F345ECD73946FECCB0BACE79" \
   | gpg --dearmor -o /etc/apt/trusted.gpg.d/unios-ppa.gpg
 
@@ -117,11 +127,11 @@ cat > /etc/apt/sources.list.d/unios.list << 'EOF'
 deb https://ppa.launchpadcontent.net/unios-team/ppa/ubuntu noble main
 EOF
 
-# Uncomment lines when ready
-#apt update
-#apt install -y unios-desktop-settings
+apt clean
+apt update
+apt install -y unios-desktop-settings
 
-# 19. Verify everything
+# 20. Verify everything
 echo "=== Wallpaper ===" && ls /usr/share/wallpapers/MyWallpaper/contents/images/
 echo "=== Icon ===" && ls /usr/share/icons/hicolor/256x256/apps/unios.png
 echo "=== Skel .config ===" && ls /etc/skel/.config/
