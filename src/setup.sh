@@ -88,7 +88,7 @@ curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x1607DC0CE88E
 
 # Correct semantic URL track ordering for custom Launchpad archives
 cat > /etc/apt/sources.list.d/unios.list << 'EOF'
-deb [signed-by=/etc/apt/trusted.gpg.d/unios-ppa.gpg] https://ppa.launchpadcontent.net/unios-team/ubuntu/unios-core-stable noble main
+deb [signed-by=/etc/apt/trusted.gpg.d/unios-ppa.gpg] ttps://ppa.launchpadcontent.net/unios-team/ppa/ubuntu noble main 
 EOF
 
 # 12. Run mirror synchronization pass
