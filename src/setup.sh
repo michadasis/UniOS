@@ -86,7 +86,7 @@ rm -f /etc/apt/sources.list.d/*cdrom*
 curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x1607DC0CE88E5632F345ECD73946FECCB0BACE79" \
   | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/unios-ppa.gpg
 
-# Unified endpoint mapping to prevent 403 authorization rejections on custom sub-paths
+# Points strictly to the verified core team distribution mirror URL
 cat > /etc/apt/sources.list.d/unios.list << 'EOF'
 deb https://ppa.launchpadcontent.net/unios-team/ppa/ubuntu noble main
 EOF
@@ -96,7 +96,6 @@ apt-get clean
 apt-get update
 
 # 13. Install core distribution utilities from your Launchpad PPA channels
-# This automatically handles fetching unibackpack version 1.0.0-2 with our clean non-t64 dependencies!
 apt-get install -y unidesk unibackpack unios-desktop-settings
 
 # 14. Add unidesk to autostart definitions
