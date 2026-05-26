@@ -13,12 +13,17 @@ if [ -f ../resources/unios.jpg ]; then
   cp ../resources/unios.jpg /usr/share/wallpapers/MyWallpaper/contents/images/unios.jpg
 fi
 
-# 2. Copy unios.png icon
+# 2. Copy unios.png and unibackpack.png icons
 mkdir -p /usr/share/icons/hicolor/256x256/apps
 if [ -f ../resources/unios.png ]; then
   cp ../resources/unios.png /usr/share/icons/hicolor/256x256/apps/unios.png
-  gtk-update-icon-cache /usr/share/icons/hicolor/ 2>/dev/null
 fi
+
+# Fallback handler for the unibackpack resource icon file
+if [ -f ../resources/unibackpack.png ]; then
+  cp ../resources/unibackpack.png /usr/share/icons/hicolor/256x256/apps/unibackpack.png
+fi
+gtk-update-icon-cache /usr/share/icons/hicolor/ 2>/dev/null
 
 # 3. Set default wallpaper in main.xml
 if [ -f /usr/share/plasma/wallpapers/org.kde.image/contents/config/main.xml ]; then
@@ -96,7 +101,6 @@ apt-get clean
 apt-get update
 
 # 13. Install core distribution utilities from your Launchpad PPA channels
-# Changed unidesk to python3-unidesk to match the real binary package target name
 apt-get install -y python3-unidesk unibackpack unios-desktop-settings
 
 # 14. Add unidesk to autostart definitions
@@ -146,6 +150,12 @@ Terminal=false
 Categories=Utility;
 EOF
 chmod +x /etc/skel/Desktop/unibackpack.desktop
+
+# If running on a live system, copy shortcuts directly to the active user's home folder
+if [ -n "$SUDO_USER" ] && [ -d "/home/$SUDO_USER/Desktop" ]; then
+  cp /etc/skel/Desktop/*.desktop "/home/$SUDO_USER/Desktop/"
+  chown "$SUDO_USER:$SUDO_USER" /home/$SUDO_USER/Desktop/*.desktop
+fi
 
 # 19. Run pipeline diagnostics
 echo "=== Verification Audit ==="
