@@ -86,9 +86,9 @@ rm -f /etc/apt/sources.list.d/*cdrom*
 curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x1607DC0CE88E5632F345ECD73946FECCB0BACE79" \
   | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/unios-ppa.gpg
 
-# Standardize explicitly on the secure launchpadcontent route for your custom PPA suite
+# Accurate canonical directory architecture for sub-archives on Launchpad's CDN
 cat > /etc/apt/sources.list.d/unios.list << 'EOF'
-deb https://ppa.launchpadcontent.net/unios-team/unios-core-stable/ubuntu noble main
+deb https://ppa.launchpadcontent.net/unios-team/ubuntu/unios-core-stable noble main
 EOF
 
 # 12. Run mirror synchronization pass
